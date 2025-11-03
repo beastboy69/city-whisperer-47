@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 210 17% 98%;
+    --foreground: 208 97% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 208 97% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 208 97% 15%;
+
+    /* Sky Blue - Primary Citizen Color */
+    --primary: 191 100% 42%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Navy Blue - Admin Color */
+    --admin: 208 97% 27%;
+    --admin-foreground: 0 0% 100%;
+
+    --secondary: 191 50% 92%;
+    --secondary-foreground: 208 97% 27%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 10% 45%;
+
+    --accent: 191 100% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Status Colors */
+    --status-pending: 45 93% 58%;
+    --status-assigned: 191 100% 42%;
+    --status-progress: 39 100% 50%;
+    --status-resolved: 142 76% 36%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 95%;
+    --ring: 191 100% 42%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(191 100% 42%), hsl(208 97% 27%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 17% 98%));
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px hsla(208, 97%, 27%, 0.08);
+    --shadow-md: 0 4px 16px hsla(208, 97%, 27%, 0.12);
+    --shadow-lg: 0 8px 32px hsla(208, 97%, 27%, 0.16);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 208 97% 10%;
+    --foreground: 210 17% 98%;
+
+    --card: 208 80% 15%;
+    --card-foreground: 210 17% 98%;
+
+    --popover: 208 80% 15%;
+    --popover-foreground: 210 17% 98%;
+
+    --primary: 191 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --admin: 208 97% 35%;
+    --admin-foreground: 0 0% 100%;
+
+    --secondary: 208 50% 20%;
+    --secondary-foreground: 210 17% 98%;
+
+    --muted: 208 40% 20%;
+    --muted-foreground: 210 20% 60%;
+
+    --accent: 191 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 208 40% 25%;
+    --input: 208 40% 20%;
+    --ring: 191 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+}
+
+@layer components {
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .status-pending {
+    @apply bg-status-pending/10 text-status-pending border border-status-pending/20;
+  }
+
+  .status-assigned {
+    @apply bg-status-assigned/10 text-status-assigned border border-status-assigned/20;
+  }
+
+  .status-progress {
+    @apply bg-status-progress/10 text-status-progress border border-status-progress/20;
+  }
+
+  .status-resolved {
+    @apply bg-status-resolved/10 text-status-resolved border border-status-resolved/20;
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-md);
+  }
+
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+}

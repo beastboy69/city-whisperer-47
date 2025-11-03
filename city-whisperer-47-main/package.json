@@ -1,0 +1,14 @@
+{
+  "name": "smartcityfix-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start:all": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
