@@ -31,7 +31,7 @@ const allowedOrigins = [
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: "*",
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }
@@ -41,7 +41,7 @@ app.set('io', io);
 
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
