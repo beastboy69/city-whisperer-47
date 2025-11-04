@@ -22,16 +22,20 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// ✅ Safe + flexible origins
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:8081',
   'http://localhost:8082',
-  ...(process.env.CLIENT_ORIGIN ? [process.env.CLIENT_ORIGIN] : [])
-];
+  process.env.CLIENT_ORIGIN,
+  'https://smartcityfix.vercel.app',
+  'https://city-whisperer-frontend.vercel.app'
+].filter(Boolean);
 
+// ✅ Socket.IO setup with proper CORS
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "*",
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }
@@ -39,9 +43,19 @@ const io = new SocketIOServer(server, {
 
 app.set('io', io);
 
-// Middleware
+// ✅ Middleware
 app.use(helmet());
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn('❌ Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -49,7 +63,7 @@ app.use(morgan('dev'));
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 300 });
 app.use('/api/', limiter);
 
-// Routes
+// ✅ Routes
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
@@ -62,7 +76,7 @@ io.on('connection', (socket) => {
   console.log('🔌 Socket connected:', socket.id);
 });
 
-// --- 🛡️ Robust initialization with error handling ---
+// ✅ Database + Cloudinary + Admin initialization
 try {
   await connectDb();
 } catch (err) {
@@ -73,15 +87,17 @@ try {
   configureCloudinary();
   console.log('✅ Cloudinary configured');
 } catch (err) {
-  console.warn('⚠️ Cloudinary not configured or failed to initialize. Continuing without uploads.');
+  console.warn('⚠️ Cloudinary not configured or failed to initialize.');
 }
 
-// --- 🔧 Stable dynamic port logic ---
+await seedAdminIfMissing();
+
+// ✅ Start server
 const startServer = (port) => {
   const onError = (err) => {
-    if (err && err.code === 'EADDRINUSE') {
+    if (err?.code === 'EADDRINUSE') {
       const fallback = port === 4000 ? 5000 : port + 1;
-      console.warn(`⚠️  Port ${port} in use. Trying :${fallback}...`);
+      console.warn(`⚠️ Port ${port} in use. Trying :${fallback}...`);
       server.off('error', onError);
       startServer(fallback);
     } else {
@@ -96,10 +112,9 @@ const startServer = (port) => {
   });
 };
 
-await seedAdminIfMissing();
 startServer(Number(process.env.PORT) || 4000);
 
-// --- 🧯 Global guards ---
+// ✅ Global guards
 process.on('unhandledRejection', (reason) => console.error('Unhandled Rejection:', reason));
 process.on('uncaughtException', (err) => console.error('Uncaught Exception:', err));
 io.engine.on('connection_error', (err) => console.error('Socket.IO connection error:', err?.message || err));
